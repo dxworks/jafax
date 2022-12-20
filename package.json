@@ -1,6 +1,6 @@
 {
   "name": "@dxworks/jafax",
-  "version": "0.3.1",
+  "version": "0.5.0",
   "description": "Java Fact Extractor (JaFaX) is a code analysis tool used to find irregularities with Java based software projects",
   "keywords": [
     "jafax",
