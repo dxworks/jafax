@@ -1,7 +1,7 @@
 on:
   push:
     tags:
-      - 'v*'
+      - 'v*-voyager'
 
 name: Create Release
 
