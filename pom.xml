@@ -10,7 +10,8 @@
 
     <properties>
         <main.class>org.vladg.jafax.MainKt</main.class>
-        <kotlin.version>1.4.32</kotlin.version>
+        <kotlin.version>1.6.21</kotlin.version>
+        <final.jar.name>jafax</final.jar.name>
         <serialization.version>1.1.0</serialization.version>
     </properties>
 
@@ -18,7 +19,7 @@
         <dependency>
             <groupId>org.eclipse.jdt</groupId>
             <artifactId>org.eclipse.jdt.core</artifactId>
-            <version>3.22.0</version>
+            <version>3.29.0</version>
         </dependency>
         <dependency>
             <groupId>com.google.inject</groupId>
@@ -33,7 +34,7 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.2.3</version>
+            <version>1.2.11</version>
         </dependency>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
@@ -49,7 +50,7 @@
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-reflect</artifactId>
-            <version>RELEASE</version>
+            <version>${kotlin.version}</version>
         </dependency>
         <dependency>
             <groupId>org.jetbrains.kotlinx</groupId>
@@ -106,6 +107,7 @@
                             <mainClass>${main.class}</mainClass>
                         </manifest>
                     </archive>
+                    <finalName>${final.jar.name}</finalName>
                     <appendAssemblyId>false</appendAssemblyId>
                 </configuration>
                 <executions>
