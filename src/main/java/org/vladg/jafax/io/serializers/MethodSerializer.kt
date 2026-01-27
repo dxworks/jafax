@@ -16,7 +16,6 @@ import org.vladg.jafax.repository.model.Class
 import org.vladg.jafax.repository.model.Method
 
 @OptIn(ExperimentalSerializationApi::class)
-@Serializer(forClass = Method::class)
 class MethodSerializer : ContainerSerializer<Method>() {
 
     override val layoutPositions = linkedMapOf(

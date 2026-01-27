@@ -1,7 +1,6 @@
 package org.vladg.jafax.io.serializers
 
 import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.Serializer
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.descriptors.buildClassSerialDescriptor
 import kotlinx.serialization.descriptors.element
@@ -13,7 +12,6 @@ import org.vladg.jafax.io.serializers.encoder.CollectionEncoder
 import org.vladg.jafax.repository.model.ImportStatement
 
 @OptIn(ExperimentalSerializationApi::class)
-@Serializer(forClass = ImportStatement::class)
 class ImportStatementSerializer : ASTSerializer<ImportStatement>() {
     override val layoutPositions = linkedMapOf(
         "id" to 0,
