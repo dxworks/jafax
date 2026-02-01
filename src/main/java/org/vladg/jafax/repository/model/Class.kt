@@ -105,7 +105,7 @@ class Class(
         superInterfaces.add(clazz)
 
     fun getFieldByName(fieldName: String): Attribute? =
-        containedFields.find { fieldName.toLowerCase().equals(it.name, true) }
+        containedFields.find { fieldName.lowercase().equals(it.name, true) }
 
     fun hasMethodWithSignature(signature: String): Boolean =
         containedMethods.find { it.signature == signature } != null
