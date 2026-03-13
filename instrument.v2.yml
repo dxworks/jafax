@@ -1,10 +1,9 @@
 name: jafax
 id: jafax
 version: 1.0.0
-runOrder: 600
 
 actions:
-  run:
+  start:
     commands:
       mine-maven:
         id: mine-maven
@@ -20,7 +19,7 @@ actions:
         id: generate-summary
         dir: ${instrumentPath}
         command:
-          win: py -3 jafax-summary.py "${instrumentPath}/results"
+          windows: py -3 jafax-summary.py "${instrumentPath}/results"
           unix: python3 jafax-summary.py "${instrumentPath}/results"
 
   pack:
