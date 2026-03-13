@@ -20,12 +20,12 @@ object ImportsComputer {
         ignoreUnknownColumns = true
     }
 
-    fun computeImports(path: Path, projName: String) {
+    fun computeImports(path: Path, projName: String): List<Imports> {
         logger.info("Beginning imports calculation...")
         val allImports = FileRepository.findAll()
             .flatMap { file -> file.imports.map { Imports(file.name, it.importedClass, it.isStatic(), it.onDemand) } }
 
         path.resolve("$projName-imports.csv").toFile().writeText(csv.encodeToString(allImports))
-
+        return allImports
     }
 }
