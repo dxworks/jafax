@@ -83,3 +83,26 @@ projects.
 ## Anti-Patterns
 |name|calculation level|calculation formula|
 |----|-----------------|-------------------|
+
+## Summary Artifacts
+
+JaFaX extraction writes summary snapshot data to `results/jafax-summary-data.json`.
+
+Use the Python helper to generate Voyager summary artifacts from that snapshot:
+
+```bash
+python3 jafax-summary.py results
+```
+
+On Windows you can use:
+
+```bash
+py -3 jafax-summary.py results
+```
+
+This command creates:
+
+- `results/summary.md`
+- `results/summary.html`
+
+If `results/jafax-summary-data.json` is missing, the Python script fails fast.

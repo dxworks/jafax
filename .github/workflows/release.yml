@@ -26,11 +26,16 @@ jobs:
         run: |
           mkdir jafax
           mkdir jafax/results
+          mkdir jafax/templates
           cp README.md jafax/README.md
           cp target/jafax.jar jafax/jafax.jar
           cp bin/jafax.sh jafax/jafax.sh
           cp bin/jafax.bat jafax/jafax.bat
+          cp lib/jafax-summary.py jafax/jafax-summary.py
+          cp lib/summary_render.py jafax/summary_render.py
+          cp lib/templates/summary.html jafax/templates/summary.html
           cp instrument.yml jafax/instrument.yml
+          cp instrument.v2.yml jafax/instrument.v2.yml
           chmod +x jafax/jafax.sh
 
       - name: Create Archive
