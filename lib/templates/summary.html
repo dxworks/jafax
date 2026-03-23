@@ -26,6 +26,10 @@
       border-left: 4px solid #cf222e;
     }
 
+    .jafax-summary.status-missing {
+      border-left: 4px solid #8c959f;
+    }
+
     .jafax-summary .summary-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -43,18 +47,22 @@
   <h2>JaFaX</h2>
   <p>Status: <strong>{{status}}</strong></p>
 
-  <div class="summary-grid">
-    <div class="summary-item"><strong>Project</strong><br>{{projectName}}</div>
-    <div class="summary-item"><strong>Layout only</strong><br>{{onlyLayout}}</div>
-    <div class="summary-item"><strong>Layout objects</strong><br>{{layoutObjectsCount}}</div>
-    <div class="summary-item"><strong>Source files</strong><br>{{filesCount}}</div>
-    <div class="summary-item"><strong>Top-level classes</strong><br>{{topLevelClassesCount}}</div>
-    <div class="summary-item"><strong>Internal relations</strong><br>{{internalRelationsCount}}</div>
-    <div class="summary-item"><strong>External relations</strong><br>{{externalRelationsCount}}</div>
-    <div class="summary-item"><strong>Metrics rows</strong><br>{{metricsCount}}</div>
-    <div class="summary-item"><strong>Imports rows</strong><br>{{importsCount}}</div>
-    <div class="summary-item"><strong>Interfaces</strong><br>{{interfacesCount}}</div>
-    <div class="summary-item"><strong>Abstract classes</strong><br>{{abstractClassesCount}}</div>
-    <div class="summary-item"><strong>Generated at</strong><br>{{generatedAt}}</div>
-  </div>
+  {{#if isMissing}}
+    <p>Summary input is missing</p>
+  {{else}}
+    <div class="summary-grid">
+      <div class="summary-item"><strong>Project</strong><br>{{projectName}}</div>
+      <div class="summary-item"><strong>Layout only</strong><br>{{onlyLayout}}</div>
+      <div class="summary-item"><strong>Layout objects</strong><br>{{layoutObjectsCount}}</div>
+      <div class="summary-item"><strong>Source files</strong><br>{{filesCount}}</div>
+      <div class="summary-item"><strong>Top-level classes</strong><br>{{topLevelClassesCount}}</div>
+      <div class="summary-item"><strong>Internal relations</strong><br>{{internalRelationsCount}}</div>
+      <div class="summary-item"><strong>External relations</strong><br>{{externalRelationsCount}}</div>
+      <div class="summary-item"><strong>Metrics rows</strong><br>{{metricsCount}}</div>
+      <div class="summary-item"><strong>Imports rows</strong><br>{{importsCount}}</div>
+      <div class="summary-item"><strong>Interfaces</strong><br>{{interfacesCount}}</div>
+      <div class="summary-item"><strong>Abstract classes</strong><br>{{abstractClassesCount}}</div>
+      <div class="summary-item"><strong>Generated at</strong><br>{{generatedAt}}</div>
+    </div>
+  {{/if}}
 </section>
