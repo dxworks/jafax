@@ -12,8 +12,9 @@ actions:
           java -jar jafax.jar "${repo}" -OL
 
   summary:
-    summaryMdFile: results/summary.md
-    summaryHtmlFile: results/summary.html
+    md-file: results/summary.md
+    html-file: results/summary.html
+    category: Structural Relations
     commands:
       generate-summary:
         id: generate-summary
