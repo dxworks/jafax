@@ -17,19 +17,28 @@ SUMMARY_DATA_FILE_NAME = 'jafax-summary-data.json'
 def build_payload(summary_data: dict[str, Any]) -> dict[str, Any]:
     status = str(summary_data.get('status') or 'success')
     generated_at = _format_generated_at(summary_data.get('generatedAt'))
+    layout_objects_count = _to_int(summary_data.get('layoutObjectsCount'))
+    files_count = _to_int(summary_data.get('filesCount'))
+    top_level_classes_count = _to_int(summary_data.get('topLevelClassesCount'))
+    internal_relations_count = _to_int(summary_data.get('internalRelationsCount'))
+    external_relations_count = _to_int(summary_data.get('externalRelationsCount'))
+    metrics_count = _to_int(summary_data.get('metricsCount'))
+    imports_count = _to_int(summary_data.get('importsCount'))
+    interfaces_count = _to_int(summary_data.get('interfacesCount'))
+    abstract_classes_count = _to_int(summary_data.get('abstractClassesCount'))
 
     metadata = {
         'project.name': summary_data.get('projectName', 'unknown'),
         'layout.only': str(bool(summary_data.get('onlyLayout'))).lower(),
-        'layout.objects': _to_int(summary_data.get('layoutObjectsCount')),
-        'files.total': _to_int(summary_data.get('filesCount')),
-        'classes.top.level': _to_int(summary_data.get('topLevelClassesCount')),
-        'relations.internal': _to_int(summary_data.get('internalRelationsCount')),
-        'relations.external': _to_int(summary_data.get('externalRelationsCount')),
-        'metrics.rows': _to_int(summary_data.get('metricsCount')),
-        'imports.rows': _to_int(summary_data.get('importsCount')),
-        'interfaces.count': _to_int(summary_data.get('interfacesCount')),
-        'abstract.classes.count': _to_int(summary_data.get('abstractClassesCount')),
+        'layout.objects': layout_objects_count,
+        'files.total': files_count,
+        'classes.top.level': top_level_classes_count,
+        'relations.internal': internal_relations_count,
+        'relations.external': external_relations_count,
+        'metrics.rows': metrics_count,
+        'imports.rows': imports_count,
+        'interfaces.count': interfaces_count,
+        'abstract.classes.count': abstract_classes_count,
         'generated.at': generated_at,
     }
 
@@ -37,36 +46,33 @@ def build_payload(summary_data: dict[str, Any]) -> dict[str, Any]:
         [
             '## JaFaX',
             '',
-            f'- Status: {status}',
             f"- Project: {summary_data.get('projectName', 'unknown')}",
             f"- Layout only mode: {str(bool(summary_data.get('onlyLayout'))).lower()}",
-            f"- Layout objects: {_to_int(summary_data.get('layoutObjectsCount'))}",
-            f"- Source files: {_to_int(summary_data.get('filesCount'))}",
-            f"- Top-level classes: {_to_int(summary_data.get('topLevelClassesCount'))}",
-            f"- Internal relations: {_to_int(summary_data.get('internalRelationsCount'))}",
-            f"- External relations: {_to_int(summary_data.get('externalRelationsCount'))}",
-            f"- Metrics rows: {_to_int(summary_data.get('metricsCount'))}",
-            f"- Imports rows: {_to_int(summary_data.get('importsCount'))}",
-            f"- Interfaces: {_to_int(summary_data.get('interfacesCount'))}",
-            f"- Abstract classes: {_to_int(summary_data.get('abstractClassesCount'))}",
+            f"- Layout objects: {_format_int(layout_objects_count)}",
+            f"- Source files: {_format_int(files_count)}",
+            f"- Top-level classes: {_format_int(top_level_classes_count)}",
+            f"- Internal relations: {_format_int(internal_relations_count)}",
+            f"- External relations: {_format_int(external_relations_count)}",
+            f"- Metrics rows: {_format_int(metrics_count)}",
+            f"- Imports rows: {_format_int(imports_count)}",
+            f"- Interfaces: {_format_int(interfaces_count)}",
+            f"- Abstract classes: {_format_int(abstract_classes_count)}",
             f'- Generated at: {generated_at}',
         ]
     )
 
     template_model = {
-        'status': status,
-        'statusClass': _to_status_class(status),
         'projectName': summary_data.get('projectName', 'unknown'),
         'onlyLayout': str(bool(summary_data.get('onlyLayout'))).lower(),
-        'layoutObjectsCount': _to_int(summary_data.get('layoutObjectsCount')),
-        'filesCount': _to_int(summary_data.get('filesCount')),
-        'topLevelClassesCount': _to_int(summary_data.get('topLevelClassesCount')),
-        'internalRelationsCount': _to_int(summary_data.get('internalRelationsCount')),
-        'externalRelationsCount': _to_int(summary_data.get('externalRelationsCount')),
-        'metricsCount': _to_int(summary_data.get('metricsCount')),
-        'importsCount': _to_int(summary_data.get('importsCount')),
-        'interfacesCount': _to_int(summary_data.get('interfacesCount')),
-        'abstractClassesCount': _to_int(summary_data.get('abstractClassesCount')),
+        'layoutObjectsCountFormatted': _format_int(layout_objects_count),
+        'filesCountFormatted': _format_int(files_count),
+        'topLevelClassesCountFormatted': _format_int(top_level_classes_count),
+        'internalRelationsCountFormatted': _format_int(internal_relations_count),
+        'externalRelationsCountFormatted': _format_int(external_relations_count),
+        'metricsCountFormatted': _format_int(metrics_count),
+        'importsCountFormatted': _format_int(imports_count),
+        'interfacesCountFormatted': _format_int(interfaces_count),
+        'abstractClassesCountFormatted': _format_int(abstract_classes_count),
         'generatedAt': generated_at,
     }
 
@@ -87,27 +93,12 @@ def build_missing_payload() -> dict[str, Any]:
         'markdown': '\n'.join([
             '## JaFaX',
             '',
-            '- Status: missing',
             '- Summary input is missing',
         ]),
         'templateModel': {
-            'status': 'missing',
-            'statusClass': 'status-missing',
             'isMissing': True,
         },
     }
-
-
-def _to_status_class(status: str) -> str:
-    if status == 'success':
-        return 'status-success'
-    if status == 'partial':
-        return 'status-warning'
-    if status == 'failed':
-        return 'status-error'
-    if status == 'missing':
-        return 'status-missing'
-    return 'status-unknown'
 
 
 def _to_int(value: Any) -> int:
@@ -115,6 +106,10 @@ def _to_int(value: Any) -> int:
         return int(value)
     except Exception:
         return 0
+
+
+def _format_int(value: int) -> str:
+    return f'{value:,}'
 
 
 def _format_generated_at(value: Any) -> str:
