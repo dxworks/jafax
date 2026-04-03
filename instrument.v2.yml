@@ -1,6 +1,6 @@
-name: jafax
+name: JaFaX
 id: jafax
-version: 1.0.0
+version: 0.5.0
 
 actions:
   start:
@@ -22,6 +22,11 @@ actions:
         command:
           windows: py -3 jafax-summary.py "${instrumentPath}/results"
           unix: python3 jafax-summary.py "${instrumentPath}/results"
+
+  clean:
+    with:
+      locations:
+        - source: ${instrumentDir}/results
 
   pack:
     with:
