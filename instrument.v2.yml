@@ -1,0 +1,35 @@
+name: JaFaX
+id: jafax
+version: 0.5.0
+
+actions:
+  start:
+    commands:
+      mine-maven:
+        id: mine-maven
+        dir: ${instrumentPath}
+        command: >-
+          java -jar jafax.jar "${repo}" -OL
+
+  summary:
+    md-file: results/summary.md
+    html-file: results/summary.html
+    category: Structural Relations
+    commands:
+      generate-summary:
+        id: generate-summary
+        dir: ${instrumentPath}
+        command:
+          windows: py -3 jafax-summary.py "${instrumentPath}/results"
+          unix: python3 jafax-summary.py "${instrumentPath}/results"
+
+  clean:
+    with:
+      locations:
+        - source: ${instrumentDir}/results
+
+  pack:
+    with:
+      locations:
+        - source: ${instrumentDir}/results
+          destination: /results
