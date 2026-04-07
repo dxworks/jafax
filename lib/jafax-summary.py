@@ -16,64 +16,33 @@ SUMMARY_DATA_FILE_NAME = 'jafax-summary-data.json'
 
 def build_payload(summary_data: dict[str, Any]) -> dict[str, Any]:
     status = str(summary_data.get('status') or 'success')
-    generated_at = _format_generated_at(summary_data.get('generatedAt'))
+    source_lines_count = _to_int(_get_value(summary_data, 'sourceLines', 'sourceLinesCount', 'sourceCodeLines'))
     layout_objects_count = _to_int(summary_data.get('layoutObjectsCount'))
     files_count = _to_int(summary_data.get('filesCount'))
     top_level_classes_count = _to_int(summary_data.get('topLevelClassesCount'))
-    internal_relations_count = _to_int(summary_data.get('internalRelationsCount'))
-    external_relations_count = _to_int(summary_data.get('externalRelationsCount'))
-    metrics_count = _to_int(summary_data.get('metricsCount'))
-    imports_count = _to_int(summary_data.get('importsCount'))
-    interfaces_count = _to_int(summary_data.get('interfacesCount'))
-    abstract_classes_count = _to_int(summary_data.get('abstractClassesCount'))
 
     metadata = {
-        'project.name': summary_data.get('projectName', 'unknown'),
-        'layout.only': str(bool(summary_data.get('onlyLayout'))).lower(),
-        'layout.objects': layout_objects_count,
+        'source.lines.total': source_lines_count,
         'files.total': files_count,
+        'layout.objects': layout_objects_count,
         'classes.top.level': top_level_classes_count,
-        'relations.internal': internal_relations_count,
-        'relations.external': external_relations_count,
-        'metrics.rows': metrics_count,
-        'imports.rows': imports_count,
-        'interfaces.count': interfaces_count,
-        'abstract.classes.count': abstract_classes_count,
-        'generated.at': generated_at,
     }
 
     markdown = '\n'.join(
         [
             '## JaFaX',
             '',
-            f"- Project: {summary_data.get('projectName', 'unknown')}",
-            f"- Layout only mode: {str(bool(summary_data.get('onlyLayout'))).lower()}",
+            f"- Source lines: {_format_int(source_lines_count)} / Source files: {_format_int(files_count)}",
             f"- Layout objects: {_format_int(layout_objects_count)}",
-            f"- Source files: {_format_int(files_count)}",
             f"- Top-level classes: {_format_int(top_level_classes_count)}",
-            f"- Internal relations: {_format_int(internal_relations_count)}",
-            f"- External relations: {_format_int(external_relations_count)}",
-            f"- Metrics rows: {_format_int(metrics_count)}",
-            f"- Imports rows: {_format_int(imports_count)}",
-            f"- Interfaces: {_format_int(interfaces_count)}",
-            f"- Abstract classes: {_format_int(abstract_classes_count)}",
-            f'- Generated at: {generated_at}',
         ]
     )
 
     template_model = {
-        'projectName': summary_data.get('projectName', 'unknown'),
-        'onlyLayout': str(bool(summary_data.get('onlyLayout'))).lower(),
-        'layoutObjectsCountFormatted': _format_int(layout_objects_count),
+        'sourceLinesCountFormatted': _format_int(source_lines_count),
         'filesCountFormatted': _format_int(files_count),
+        'layoutObjectsCountFormatted': _format_int(layout_objects_count),
         'topLevelClassesCountFormatted': _format_int(top_level_classes_count),
-        'internalRelationsCountFormatted': _format_int(internal_relations_count),
-        'externalRelationsCountFormatted': _format_int(external_relations_count),
-        'metricsCountFormatted': _format_int(metrics_count),
-        'importsCountFormatted': _format_int(imports_count),
-        'interfacesCountFormatted': _format_int(interfaces_count),
-        'abstractClassesCountFormatted': _format_int(abstract_classes_count),
-        'generatedAt': generated_at,
     }
 
     return {
@@ -106,6 +75,14 @@ def _to_int(value: Any) -> int:
         return int(value)
     except Exception:
         return 0
+
+
+def _get_value(summary_data: dict[str, Any], *keys: str, default: Any = None) -> Any:
+    for key in keys:
+        if key in summary_data:
+            return summary_data[key]
+
+    return default
 
 
 def _format_int(value: int) -> str:

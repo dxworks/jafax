@@ -18,6 +18,7 @@ class SummaryIT {
             val summaryData = JafaxSummaryData(
                 projectName = "demo",
                 onlyLayout = false,
+                sourceLinesCount = 100,
                 filesCount = 12,
                 topLevelClassesCount = 5,
                 layoutObjectsCount = 37,
@@ -35,6 +36,7 @@ class SummaryIT {
             assertTrue(summaryData.metricsCount > 0)
 
             val persisted = json.decodeFromString(JafaxSummaryData.serializer(), Files.readString(summaryDataPath))
+            assertTrue(persisted.sourceLinesCount > 0)
             assertTrue(persisted.topLevelClassesCount > 0)
             assertTrue(persisted.internalRelationsCount > 0)
         } finally {

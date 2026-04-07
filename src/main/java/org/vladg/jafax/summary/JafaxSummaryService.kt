@@ -21,6 +21,7 @@ data class JafaxSummaryData(
     val status: String = SUCCESS_STATUS,
     val projectName: String,
     val onlyLayout: Boolean,
+    val sourceLinesCount: Int,
     val filesCount: Int,
     val topLevelClassesCount: Int,
     val layoutObjectsCount: Int,

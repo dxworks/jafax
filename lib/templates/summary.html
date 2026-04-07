@@ -23,18 +23,10 @@
     <p>Summary input is missing</p>
   {{else}}
     <div class="summary-grid">
-      <div class="summary-item"><strong>Project</strong><br>{{projectName}}</div>
-      <div class="summary-item"><strong>Layout only</strong><br>{{onlyLayout}}</div>
-      <div class="summary-item"><strong>Layout objects</strong><br>{{layoutObjectsCountFormatted}}</div>
+      <div class="summary-item"><strong>Source lines</strong><br>{{sourceLinesCountFormatted}}</div>
       <div class="summary-item"><strong>Source files</strong><br>{{filesCountFormatted}}</div>
+      <div class="summary-item"><strong>Layout objects</strong><br>{{layoutObjectsCountFormatted}}</div>
       <div class="summary-item"><strong>Top-level classes</strong><br>{{topLevelClassesCountFormatted}}</div>
-      <div class="summary-item"><strong>Internal relations</strong><br>{{internalRelationsCountFormatted}}</div>
-      <div class="summary-item"><strong>External relations</strong><br>{{externalRelationsCountFormatted}}</div>
-      <div class="summary-item"><strong>Metrics rows</strong><br>{{metricsCountFormatted}}</div>
-      <div class="summary-item"><strong>Imports rows</strong><br>{{importsCountFormatted}}</div>
-      <div class="summary-item"><strong>Interfaces</strong><br>{{interfacesCountFormatted}}</div>
-      <div class="summary-item"><strong>Abstract classes</strong><br>{{abstractClassesCountFormatted}}</div>
-      <div class="summary-item"><strong>Generated at</strong><br>{{generatedAt}}</div>
     </div>
   {{/if}}
 </section>

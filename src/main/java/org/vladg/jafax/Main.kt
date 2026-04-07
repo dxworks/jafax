@@ -14,7 +14,10 @@ import org.vladg.jafax.summary.JafaxSummaryService
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
+import kotlin.io.path.extension
+import kotlin.io.path.isDirectory
 import kotlin.io.path.ExperimentalPathApi
+import kotlin.io.path.isRegularFile
 import kotlin.io.path.name
 import kotlin.system.exitProcess
 
@@ -53,6 +56,7 @@ internal fun runExtraction(path: Path, onlyLayout: Boolean, resultsPath: Path): 
         resultsPath.toFile().mkdirs()
 
     ProjectScanner.beginScan(path, path.name)
+    val sourceLinesCount = computeSourceLines(path)
     val topLevelClassesCount = ClassRepository.topLevelClasses.size
     val filesCount = FileRepository.findAll().size
     val layoutObjectsCount = CommonRepository.findAll().size
@@ -79,6 +83,7 @@ internal fun runExtraction(path: Path, onlyLayout: Boolean, resultsPath: Path): 
         status = status,
         projectName = path.name,
         onlyLayout = onlyLayout,
+        sourceLinesCount = sourceLinesCount,
         filesCount = filesCount,
         topLevelClassesCount = topLevelClassesCount,
         layoutObjectsCount = layoutObjectsCount,
@@ -93,4 +98,21 @@ internal fun runExtraction(path: Path, onlyLayout: Boolean, resultsPath: Path): 
 
     return summaryData
 
+}
+
+private fun computeSourceLines(path: Path): Int {
+    if (!path.isDirectory()) {
+        return 0
+    }
+
+    Files.walk(path).use { allPaths ->
+        return allPaths
+            .filter { it.isRegularFile() && it.extension == "java" }
+            .mapToInt { filePath ->
+                Files.newBufferedReader(filePath).useLines { lines ->
+                    lines.count().toInt()
+                }
+            }
+            .sum()
+    }
 }
