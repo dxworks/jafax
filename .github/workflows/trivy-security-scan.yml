@@ -1,0 +1,21 @@
+name: Trivy Security Scan
+
+on:
+  pull_request:
+    branches: [dev]
+
+permissions:
+  contents: read
+  security-events: write
+  pull-requests: write
+
+jobs:
+  # Filesystem scan only — jafax ships no Docker image, so there is no image
+  # scan. Report-only (fail-on-findings: false): jafax's Java/Kotlin
+  # dependencies are intentionally not being updated yet, so their advisories
+  # are surfaced in the Security tab without blocking PRs. Flip this to a hard
+  # gate once those dependencies are refreshed.
+  trivy-fs:
+    uses: dxworks/pipelines/.github/workflows/trivy-fs-scan.yml@v1
+    with:
+      fail-on-findings: false

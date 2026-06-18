@@ -1,10 +1,9 @@
-name: Create Release
+name: Create Voyager Release
 
 on:
   push:
     tags:
-      - 'v*'
-      - '!*-voyager'
+      - 'v*-voyager'
 
 jobs:
   parse-tag:
@@ -16,6 +15,7 @@ jobs:
         id: parse
         run: |
           semver=${TAG#"refs/tags/v"}
+          semver=${semver%"-voyager"}
           echo "semver=$semver" >> "$GITHUB_OUTPUT"
         env:
           TAG: ${{ github.ref }}
@@ -26,31 +26,16 @@ jobs:
     with:
       version: ${{ needs.parse-tag.outputs.semver }}
       java-version: '17'
-
-  npm:
-    needs: parse-tag
-    uses: dxworks/pipelines/.github/workflows/release-npm.yml@v1
-    with:
-      version: ${{ needs.parse-tag.outputs.semver }}
-      # Builds the jar (JDK 17) before npm assembles dist/ via prepublishOnly.
-      build-script: ./scripts/build.sh
-    permissions:
-      contents: read
-      packages: write
-      id-token: write
+      prepare-script: ./scripts/prepare-release-voyager.sh
 
   github-release:
-    needs: [parse-tag, archive, npm]
-    if: |
-      always() &&
-      needs.archive.result == 'success' &&
-      (needs.npm.result == 'success' || needs.npm.result == 'skipped')
+    needs: [parse-tag, archive]
     permissions:
       contents: write
     uses: dxworks/pipelines/.github/workflows/release-github.yml@v1
     with:
       version: ${{ needs.parse-tag.outputs.semver }}
-      tag: v${{ needs.parse-tag.outputs.semver }}
-      release-name: JaFaX ${{ needs.parse-tag.outputs.semver }}
-      asset-name: jafax.zip
+      tag: v${{ needs.parse-tag.outputs.semver }}-voyager
+      release-name: JaFaX ${{ needs.parse-tag.outputs.semver }} (Voyager)
+      asset-name: jafax-voyager.zip
       release-notes-file: releaseNotes/v${{ needs.parse-tag.outputs.semver }}.md

@@ -1,0 +1,26 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - '*'
+    tags-ignore:
+      - 'v*'
+  pull_request:
+    branches: [dev]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Set up Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: 'temurin'
+          # Kotlin 1.6.21 compiles on JDK 17; the jar runs on Java 21+ at runtime.
+          java-version: 17
+
+      - name: Maven Verify
+        run: mvn -B clean verify

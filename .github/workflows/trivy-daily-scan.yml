@@ -1,0 +1,17 @@
+name: Trivy Daily Scan
+
+on:
+  schedule:
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  security-events: write
+
+jobs:
+  # Daily filesystem scan (no image-ref — jafax publishes no Docker image).
+  # The daily scan is report-only by design and uploads results to the
+  # Security tab.
+  trivy-daily:
+    uses: dxworks/pipelines/.github/workflows/trivy-daily-scan.yml@v1
