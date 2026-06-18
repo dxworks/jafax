@@ -7,15 +7,55 @@ on:
 permissions:
   contents: read
   security-events: write
-  pull-requests: write
 
+# Inlined rather than the shared dxworks/pipelines trivy-fs-scan.yml so we can
+# prime the local Maven cache first: Trivy resolves pom.xml against Maven
+# Central, which rate-limits (HTTP 429) shared CI IPs. `mvn dependency:go-offline`
+# makes the pom scan resolve from ~/.m2 (reliable). The scan is report-only
+# (exit-code 0): jafax's Java/Kotlin dependencies are intentionally not being
+# updated yet, so their advisories are surfaced in the Security tab without
+# blocking PRs. Flip exit-code to 1 once those dependencies are refreshed.
 jobs:
-  # Filesystem scan only — jafax ships no Docker image, so there is no image
-  # scan. Report-only (fail-on-findings: false): jafax's Java/Kotlin
-  # dependencies are intentionally not being updated yet, so their advisories
-  # are surfaced in the Security tab without blocking PRs. Flip this to a hard
-  # gate once those dependencies are refreshed.
-  trivy-fs:
-    uses: dxworks/pipelines/.github/workflows/trivy-fs-scan.yml@v1
-    with:
-      fail-on-findings: false
+  trivy-fs-scan:
+    name: Filesystem Vulnerability Scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Set up Java
+        uses: actions/setup-java@v5
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Prime local Maven repository
+        run: mvn -B -q dependency:go-offline
+
+      - name: Run Trivy filesystem scan (table)
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: fs
+          scan-ref: .
+          format: table
+          exit-code: 0
+          severity: MEDIUM,HIGH,CRITICAL
+          skip-dirs: 'node_modules,dist,target'
+
+      - name: Run Trivy filesystem scan (sarif)
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: fs
+          scan-ref: .
+          format: sarif
+          output: trivy-fs-results.sarif
+          exit-code: 0
+          severity: MEDIUM,HIGH,CRITICAL
+          skip-dirs: 'node_modules,dist,target'
+
+      - name: Upload results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v4
+        if: always()
+        with:
+          sarif_file: trivy-fs-results.sarif
+          category: trivy-fs
