@@ -13,7 +13,26 @@
         <kotlin.version>1.6.21</kotlin.version>
         <final.jar.name>jafax</final.jar.name>
         <serialization.version>1.1.0</serialization.version>
+        <guava.version>33.7.1-jre</guava.version>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <!--
+              Guice 5.0.1 pulls guava 30.1-jre, which is vulnerable to
+              GHSA-7g45-4rm6-3mm3 and GHSA-5mg8-w23w-74h3 (temp-directory
+              permissions in Files.createTempDir / FileBackedOutputStream);
+              both are fixed in 32.0.0. Guava is not a direct dependency and
+              upgrading Guice does not help - even Guice 7.0.0 still resolves
+              guava 31.0.1-jre - so the transitive version is pinned here.
+            -->
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>${guava.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
         <dependency>

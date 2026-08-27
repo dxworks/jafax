@@ -1,1 +1,1 @@
-java -jar insider.jar %*
+java -jar jafax.jar %*
