@@ -4,3 +4,13 @@ target
 results
 node_modules
 dist
+
+# Release staging: prepare-release*.sh builds these in the repo root.
+/jafax/
+/*.zip
+
+# Legacy JaFaX output written to the repo root (current runs go to results/).
+/*-layout.JSON
+
+# macOS
+.DS_Store
