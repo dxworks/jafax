@@ -61,7 +61,7 @@ class RelationsIT {
     }
 
     private fun getActualRelationsFile(path: Path) =
-            File("$path/org1-relations.csv")
+            File("$path/org1-internal-relations.csv")
 
     private fun getExpectedRelationsFile() =
             File("src/test/resources/expectedRelations.csv")
