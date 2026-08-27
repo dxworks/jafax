@@ -22,8 +22,9 @@ jobs:
           # Kotlin 1.6.21 compiles on JDK 17; the jar runs on Java 21+ at runtime.
           java-version: 17
 
-      # `package` (unit tests via surefire) — the failsafe integration tests
-      # (MetricsIT/LayoutIT) are pre-existing-broken (missing fixtures), so they
-      # are not run here, matching the release build (scripts/build.sh).
+      # `verify` runs both surefire (unit tests) and failsafe (MetricsIT,
+      # RelationsIT, LayoutIT), which diff real analysis output against the
+      # fixtures in src/test/resources. The release build (scripts/build.sh)
+      # stays on `package` so a release is never gated on the slower ITs.
       - name: Maven Build
-        run: mvn -B clean package
+        run: mvn -B clean verify
