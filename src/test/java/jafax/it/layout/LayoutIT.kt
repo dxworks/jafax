@@ -1,5 +1,6 @@
 package jafax.it.layout
 
+import jafax.createResultsDirectory
 import jafax.getSimpleProjectPath
 import kotlinx.serialization.decodeFromString
 import org.junit.Test
@@ -16,6 +17,7 @@ class LayoutIT {
 
     @BeforeTest
     fun clearRepositories() {
+        createResultsDirectory()
         ClassRepository.clear()
         CommonRepository.clear()
     }
