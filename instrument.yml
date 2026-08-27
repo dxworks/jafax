@@ -6,5 +6,8 @@ results:
 
 commands:
   - name: Mine Maven
-    win: java -jar jafax.jar "${repo}" -OL
-    unix: java -jar jafax.jar "${repo}" -OL
+    win: java -Xmx${max-heap} -jar jafax.jar "${repo}" -OL
+    unix: java -Xmx${max-heap} -jar jafax.jar "${repo}" -OL
+
+parameters:
+  max-heap: 8g
