@@ -1,5 +1,6 @@
 package jafax.it.relations
 
+import jafax.createResultsDirectory
 import jafax.getSimpleProjectPath
 import org.vladg.jafax.io.model.Relations
 import org.vladg.jafax.io.scanner.ProjectScanner
@@ -20,13 +21,14 @@ class RelationsIT {
 
     @BeforeTest
     fun clearRepositories() {
+        createResultsDirectory()
         ClassRepository.clear()
         CommonRepository.clear()
     }
 
     @Test
     fun `should properly compute relations when using the layout file`() {
-        val layoutFile = getLayoutFile(projectPath)
+        val layoutFile = getLayoutFile("Layout.JSON")
         layoutFile.delete()
         verifyRelations()
     }
@@ -54,12 +56,12 @@ class RelationsIT {
     }
 
     private fun computeRelations() {
-        ProjectScanner.beginScan(projectPath)
-        RelationsComputer.computeRelations(projectPath)
+        ProjectScanner.beginScan(projectPath, "Layout.JSON")
+        RelationsComputer.computeRelations(projectPath, "org1")
     }
 
     private fun getActualRelationsFile(path: Path) =
-            File("$path/org1-relations.csv")
+            File("$path/org1-internal-relations.csv")
 
     private fun getExpectedRelationsFile() =
             File("src/test/resources/expectedRelations.csv")

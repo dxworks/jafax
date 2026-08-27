@@ -1,5 +1,6 @@
 package jafax.it.layout
 
+import jafax.createResultsDirectory
 import jafax.getSimpleProjectPath
 import kotlinx.serialization.decodeFromString
 import org.junit.Test
@@ -16,13 +17,14 @@ class LayoutIT {
 
     @BeforeTest
     fun clearRepositories() {
+        createResultsDirectory()
         ClassRepository.clear()
         CommonRepository.clear()
     }
 
     @Test
     fun `should properly extract data without file`() {
-        val layoutFile = getLayoutFile(projectPath)
+        val layoutFile = getLayoutFile("Layout.JSON")
         layoutFile.delete()
         scanAndVerify()
     }
@@ -33,7 +35,7 @@ class LayoutIT {
     }
 
     private fun scanAndVerify() {
-        ProjectScanner.beginScan(projectPath)
+        ProjectScanner.beginScan(projectPath, "Layout.JSON")
         verifyLayout(getExpectedLayout())
     }
 
