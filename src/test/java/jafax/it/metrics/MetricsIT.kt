@@ -1,5 +1,6 @@
 package jafax.it.metrics
 
+import jafax.createResultsDirectory
 import jafax.getSimpleProjectPath
 import org.vladg.jafax.io.model.Metrics
 import org.vladg.jafax.io.scanner.ProjectScanner
@@ -20,6 +21,7 @@ class MetricsIT {
 
     @BeforeTest
     fun clearRepositories() {
+        createResultsDirectory()
         ClassRepository.clear()
         CommonRepository.clear()
     }

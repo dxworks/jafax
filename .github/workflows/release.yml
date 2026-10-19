@@ -1,105 +1,56 @@
+name: Create Release
+
 on:
   push:
     tags:
-      - 'v*-voyager'
-
-name: Create Release
+      - 'v*'
+      - '!*-voyager'
 
 jobs:
-  release:
-    name: Release
+  parse-tag:
     runs-on: ubuntu-latest
+    outputs:
+      semver: ${{ steps.parse.outputs.semver }}
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Java
-        uses: actions/setup-java@v3
-        with:
-          java-version: '11'
-          distribution: 'adopt'
-
-      - name: Build
-        run: mvn clean package -DskipTests
-
-      - name: Prepare Assets
-        run: |
-          mkdir jafax
-          mkdir jafax/results
-          mkdir jafax/templates
-          cp README.md jafax/README.md
-          cp target/jafax.jar jafax/jafax.jar
-          cp bin/jafax.sh jafax/jafax.sh
-          cp bin/jafax.bat jafax/jafax.bat
-          cp lib/jafax-summary.py jafax/jafax-summary.py
-          cp lib/summary_render.py jafax/summary_render.py
-          cp lib/templates/summary.html jafax/templates/summary.html
-          cp instrument.yml jafax/instrument.yml
-          cp instrument.v2.yml jafax/instrument.v2.yml
-          chmod +x jafax/jafax.sh
-
-      - name: Create Archive
-        run: zip -r jafax.zip jafax
-
       - name: Extract Semver
-        id: semver_parser
+        id: parse
         run: |
           semver=${TAG#"refs/tags/v"}
-          semver=${semver%"-voyager"}
-
-          echo ::set-output name=semver::$semver
+          echo "semver=$semver" >> "$GITHUB_OUTPUT"
         env:
           TAG: ${{ github.ref }}
 
-      - name: Setup Node
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18.x'
-          cache: 'npm'
-          registry-url: 'https://npm.pkg.github.com'
-          scope: '@dxworks'
+  archive:
+    needs: parse-tag
+    uses: dxworks/pipelines/.github/workflows/release-archive.yml@v1
+    with:
+      version: ${{ needs.parse-tag.outputs.semver }}
+      java-version: '17'
 
-      - name: Prepare Node App
-        run: |
-          npm ci
-          npm run build
+  npm:
+    needs: parse-tag
+    uses: dxworks/pipelines/.github/workflows/release-npm.yml@v1
+    with:
+      version: ${{ needs.parse-tag.outputs.semver }}
+      # Builds the jar (JDK 17) before npm assembles dist/ via prepublishOnly.
+      build-script: ./scripts/build.sh
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
 
-      - name: Setup Version
-        run: |
-          ls -al node_modules/.bin
-          node_modules/.bin/json -I -f package.json -e "this.version='$VERSION'"
-        env:
-          VERSION: ${{ steps.semver_parser.outputs.semver }}
-
-      - name: Publish NPM
-        run: npm publish
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Setup Node with NPM Package Registry
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18.x'
-          cache: 'npm'
-          registry-url: 'https://registry.npmjs.org'
-          scope: '@dxworks'
-
-      - name: Publish on NPM
-        run: npm publish --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-      - name: Prepare Release Notes
-        run: touch ${{ github.workspace }}/releaseNotes/v${{ steps.semver_parser.outputs.semver }}.md
-
-      - name: Create Release
-        id: create_release
-        uses: softprops/action-gh-release@v1
-        with:
-          name: JaFaX ${{ steps.semver_parser.outputs.semver }}
-          body_path: ${{ github.workspace }}/releaseNotes/v${{ steps.semver_parser.outputs.semver }}.md
-          body: ""
-          prerelease: false
-          draft: false
-          fail_on_unmatched_files: true
-          files: jafax.zip
+  github-release:
+    needs: [parse-tag, archive, npm]
+    if: |
+      always() &&
+      needs.archive.result == 'success' &&
+      (needs.npm.result == 'success' || needs.npm.result == 'skipped')
+    permissions:
+      contents: write
+    uses: dxworks/pipelines/.github/workflows/release-github.yml@v1
+    with:
+      version: ${{ needs.parse-tag.outputs.semver }}
+      tag: v${{ needs.parse-tag.outputs.semver }}
+      release-name: JaFaX ${{ needs.parse-tag.outputs.semver }}
+      asset-name: jafax.zip
+      release-notes-file: releaseNotes/v${{ needs.parse-tag.outputs.semver }}.md

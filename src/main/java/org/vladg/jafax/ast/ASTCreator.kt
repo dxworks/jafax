@@ -15,7 +15,7 @@ class ASTCreator {
 
     fun createAst(javaFiles: Array<String>, jarFiles: Array<String>) {
         logger.info("Creating the AST Request...")
-        val parser = ASTParser.newParser(AST.JLS17)
+        val parser = ASTParser.newParser(AST.JLS21)
         parser.setResolveBindings(true)
         parser.setKind(ASTParser.K_COMPILATION_UNIT)
         setParserOptions(parser)
@@ -29,9 +29,9 @@ class ASTCreator {
 
     private fun setParserOptions(parser: ASTParser) {
         val options = JavaCore.getOptions()
-        options[JavaCore.COMPILER_COMPLIANCE] = JavaCore.VERSION_17
-        options[JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM] = JavaCore.VERSION_17
-        options[JavaCore.COMPILER_SOURCE] = JavaCore.VERSION_17
+        options[JavaCore.COMPILER_COMPLIANCE] = JavaCore.VERSION_21
+        options[JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM] = JavaCore.VERSION_21
+        options[JavaCore.COMPILER_SOURCE] = JavaCore.VERSION_21
         parser.setCompilerOptions(options)
     }
 
