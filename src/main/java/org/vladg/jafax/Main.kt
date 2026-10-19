@@ -109,7 +109,8 @@ private fun computeSourceLines(path: Path): Int {
         return allPaths
             .filter { it.isRegularFile() && it.extension == "java" }
             .mapToInt { filePath ->
-                Files.newBufferedReader(filePath).useLines { lines ->
+                // Replaces bytes that are not UTF-8 (as the parser does) instead of throwing
+                filePath.toFile().useLines { lines ->
                     lines.count().toInt()
                 }
             }
