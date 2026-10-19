@@ -4,12 +4,14 @@ version: 0.5.0
 
 actions:
   start:
+    parameters:
+      max-heap: 8g
     commands:
       mine-maven:
         id: mine-maven
         dir: ${instrumentPath}
         command: >-
-          java -jar jafax.jar "${repo}" -OL
+          java -Xmx${max-heap} -jar jafax.jar "${repo}" -OL
 
   summary:
     md-file: results/summary.md
