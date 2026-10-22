@@ -16,4 +16,10 @@ cp lib/templates/summary.html jafax/templates/summary.html
 cp instrument.yml jafax/instrument.yml
 cp instrument.v2.yml jafax/instrument.v2.yml
 
+# The tool's version, from the release tag, in both manifests (V1 and V2)
+for f in jafax/instrument.yml jafax/instrument.v2.yml; do
+  awk -v v="$VERSION" '!/^version:/ {print} /^name:/ {print "version: " v}' "$f" > "$f.tmp"
+  mv "$f.tmp" "$f"
+done
+
 zip -r jafax-voyager.zip jafax
