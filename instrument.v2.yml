@@ -1,0 +1,37 @@
+name: JaFaX
+id: jafax
+version: 0.5.0
+
+actions:
+  start:
+    parameters:
+      max-heap: 8g
+    commands:
+      mine-maven:
+        id: mine-maven
+        dir: ${instrumentPath}
+        command: >-
+          java -Xmx${max-heap} -jar jafax.jar "${repo}" -OL
+
+  summary:
+    md-file: results/summary.md
+    html-file: results/summary.html
+    category: Structural Relations
+    commands:
+      generate-summary:
+        id: generate-summary
+        dir: ${instrumentPath}
+        command:
+          windows: py -3 --version >nul 2>nul & if not errorlevel 1 (py -3 jafax-summary.py "${instrumentPath}/results") else (python jafax-summary.py "${instrumentPath}/results")
+          unix: if command -v python3 >/dev/null 2>&1; then python3 jafax-summary.py "${instrumentPath}/results"; else python jafax-summary.py "${instrumentPath}/results"; fi
+
+  clean:
+    with:
+      locations:
+        - source: ${instrumentDir}/results
+
+  pack:
+    with:
+      locations:
+        - source: ${instrumentDir}/results
+          destination: /results
