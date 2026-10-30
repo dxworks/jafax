@@ -1,0 +1,32 @@
+<section class="jafax-summary">
+  <style>
+    .jafax-summary {
+      color: #1f2328;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+
+    .jafax-summary .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 8px 16px;
+      margin: 4px 0;
+    }
+
+    .jafax-summary .summary-item {
+      padding: 6px 8px;
+      background: #f6f8fa;
+      border-radius: 6px;
+    }
+  </style>
+
+  {{#if isMissing}}
+    <p>Summary input is missing</p>
+  {{else}}
+    <div class="summary-grid">
+      <div class="summary-item"><strong>Source lines</strong><br>{{sourceLinesCountFormatted}}</div>
+      <div class="summary-item"><strong>Source files</strong><br>{{filesCountFormatted}}</div>
+      <div class="summary-item"><strong>Layout objects</strong><br>{{layoutObjectsCountFormatted}}</div>
+      <div class="summary-item"><strong>Top-level classes</strong><br>{{topLevelClassesCountFormatted}}</div>
+    </div>
+  {{/if}}
+</section>
