@@ -22,6 +22,13 @@ actions:
     parameters:
       max-heap: 8g
     commands:
+      # jafax reuses results/<name>-layout.json instead of scanning; V1 empties results/ after each run, V2 keeps it
+      clean-last-run:
+        id: clean-last-run
+        dir: ${instrumentPath}
+        command:
+          windows: if exist results rmdir /s /q results
+          unix: rm -rf results
       mine-maven:
         id: mine-maven
         dir: ${instrumentPath}
