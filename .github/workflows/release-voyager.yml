@@ -1,0 +1,41 @@
+name: Create Voyager Release
+
+on:
+  push:
+    tags:
+      - 'v*-voyager'
+
+jobs:
+  parse-tag:
+    runs-on: ubuntu-latest
+    outputs:
+      semver: ${{ steps.parse.outputs.semver }}
+    steps:
+      - name: Extract Semver
+        id: parse
+        run: |
+          semver=${TAG#"refs/tags/v"}
+          semver=${semver%"-voyager"}
+          echo "semver=$semver" >> "$GITHUB_OUTPUT"
+        env:
+          TAG: ${{ github.ref }}
+
+  archive:
+    needs: parse-tag
+    uses: dxworks/pipelines/.github/workflows/release-archive.yml@v1
+    with:
+      version: ${{ needs.parse-tag.outputs.semver }}
+      java-version: '17'
+      prepare-script: ./scripts/prepare-release-voyager.sh
+
+  github-release:
+    needs: [parse-tag, archive]
+    permissions:
+      contents: write
+    uses: dxworks/pipelines/.github/workflows/release-github.yml@v1
+    with:
+      version: ${{ needs.parse-tag.outputs.semver }}
+      tag: v${{ needs.parse-tag.outputs.semver }}-voyager
+      release-name: JaFaX ${{ needs.parse-tag.outputs.semver }} (Voyager)
+      asset-name: jafax-voyager.zip
+      release-notes-file: releaseNotes/v${{ needs.parse-tag.outputs.semver }}.md

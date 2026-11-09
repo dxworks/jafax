@@ -10,6 +10,7 @@ import jafax.MethodGenerator.generateEmptyMethod
 import org.vladg.jafax.io.LayoutFormat
 import org.vladg.jafax.repository.model.Attribute.AttributeKind
 import org.vladg.jafax.repository.model.Method
+import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 import kotlin.test.assertEquals
@@ -29,6 +30,13 @@ fun fillContainer(container: Container): Container {
 }
 
 fun getSimpleProjectPath(): Path = Paths.get("src/test/resources/org1")
+
+/**
+ * The layout writer writes to ./results without creating it; main() mkdirs it
+ * at startup, and the ITs drive ProjectScanner directly, so they have to do the
+ * same. The directory is gitignored, so it cannot simply be committed empty.
+ */
+fun createResultsDirectory(): Path = Files.createDirectories(Paths.get("results"))
 
 fun getComplexProjectPath(): Path = Paths.get("src/test/resources/insider")
 
