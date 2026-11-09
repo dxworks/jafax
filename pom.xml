@@ -10,10 +10,10 @@
 
     <properties>
         <main.class>org.vladg.jafax.MainKt</main.class>
-        <kotlin.version>1.6.21</kotlin.version>
+        <kotlin.version>2.1.0</kotlin.version>
         <final.jar.name>jafax</final.jar.name>
         <serialization.version>1.1.0</serialization.version>
-        <guava.version>33.7.1-jre</guava.version>
+        <guava.version>33.7.2-jre</guava.version>
     </properties>
 
     <dependencyManagement>
@@ -48,12 +48,12 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>2.0.17</version>
+            <version>2.0.19</version>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.5.36</version>
+            <version>1.6.5</version>
         </dependency>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
@@ -161,6 +161,10 @@
                 </executions>
                 <configuration>
                     <jvmTarget>11</jvmTarget>
+                    <!-- Kotlin 2 compiler, 1.9 language level: the K2 front end crashes on the
+                         kotlinx-serialization 1.1.0 @Serializer(forClass) classes -->
+                    <languageVersion>1.9</languageVersion>
+                    <apiVersion>1.9</apiVersion>
                     <args>
                         <arg>-Xopt-in=kotlin.RequiresOptIn</arg>
                     </args>
