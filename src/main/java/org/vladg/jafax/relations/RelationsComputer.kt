@@ -15,15 +15,18 @@ object RelationsComputer {
 
     private val logger = logger()
 
-    fun computeRelations(path: Path, projectName: String) {
+    fun computeRelations(path: Path, projectName: String): List<Relations> {
         logger.info("Beginning relations calculation...")
+        val relations = ClassRepository.topLevelClasses
+            .groupBy { it.fileName }
+            .flatMap { computeRelations(it.key!!, it.value) }
+
         RelationsWriter.writeRelationsToFile(
-            ClassRepository.topLevelClasses
-                .groupBy { it.fileName }
-                .flatMap { computeRelations(it.key!!, it.value) },
+            relations,
             path,
             projectName
         )
+        return relations
     }
 
     private fun computeRelations(fileName: String, classesInFile: List<Class>): Collection<Relations> =

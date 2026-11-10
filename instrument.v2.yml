@@ -1,0 +1,59 @@
+name: JaFaX
+id: jafax
+version: 0.5.0
+
+actions:
+  verify:
+    with:
+      requirements:
+        - name: Java 17+
+          min: 17.0.0
+          command: java -version
+          match:
+            - 'version "(?<version>.+)"'
+        - name: Python 3.9+
+          min: 3.9.0
+          command:
+            windows: py -3 --version >nul 2>nul & if not errorlevel 1 (py -3 --version) else (python --version)
+            unix: if command -v python3 >/dev/null 2>&1; then python3 --version; else python --version; fi
+          match:
+            - 'Python (?<version>.+)'
+  start:
+    parameters:
+      max-heap: 8g
+    commands:
+      # jafax reuses results/<name>-layout.json instead of scanning; V1 empties results/ after each run, V2 keeps it
+      clean-last-run:
+        id: clean-last-run
+        dir: ${instrumentPath}
+        command:
+          windows: if exist results rmdir /s /q results
+          unix: rm -rf results
+      mine-maven:
+        id: mine-maven
+        dir: ${instrumentPath}
+        command: >-
+          java -Xmx${max-heap} -jar jafax.jar "${repo}" -OL
+
+  summary:
+    md-file: results/summary.md
+    html-file: results/summary.html
+    category: Structural Relations
+    commands:
+      generate-summary:
+        id: generate-summary
+        dir: ${instrumentPath}
+        command:
+          windows: py -3 --version >nul 2>nul & if not errorlevel 1 (py -3 jafax-summary.py "${instrumentPath}/results") else (python jafax-summary.py "${instrumentPath}/results")
+          unix: if command -v python3 >/dev/null 2>&1; then python3 jafax-summary.py "${instrumentPath}/results"; else python jafax-summary.py "${instrumentPath}/results"; fi
+
+  clean:
+    with:
+      locations:
+        - source: ${instrumentDir}/results
+
+  pack:
+    with:
+      locations:
+        - source: ${instrumentDir}/results
+          destination: /results
