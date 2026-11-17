@@ -54,5 +54,8 @@
         "command": "jafaxCommand"
       }
     ]
+  },
+  "engines": {
+    "node": ">=26"
   }
 }
