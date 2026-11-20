@@ -23,12 +23,15 @@ object MetricsComputer {
 
     private val cachedHits: MutableMap<Class, Int> = HashMap()
 
-    fun computeMetrics(path: Path) {
+    fun computeMetrics(path: Path, name: String): List<Metrics> {
         logger.info("Beginning metrics calculation...")
+        val metrics = computeMetrics(getClassesForMetrics())
         MetricsWriter.writeMetricsToFile(
-                computeMetrics(getClassesForMetrics()),
-                path
+                metrics,
+                path,
+                name
         )
+        return metrics
     }
 
     private fun getClassesForMetrics() =

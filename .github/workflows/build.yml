@@ -1,0 +1,30 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - '*'
+    tags-ignore:
+      - 'v*'
+  pull_request:
+    branches: [dev]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Set up Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: 'temurin'
+          # Kotlin 1.6.21 compiles on JDK 17; the jar runs on Java 21+ at runtime.
+          java-version: 17
+
+      # `verify` runs both surefire (unit tests) and failsafe (MetricsIT,
+      # RelationsIT, LayoutIT), which diff real analysis output against the
+      # fixtures in src/test/resources. The release build (scripts/build.sh)
+      # stays on `package` so a release is never gated on the slower ITs.
+      - name: Maven Build
+        run: mvn -B clean verify

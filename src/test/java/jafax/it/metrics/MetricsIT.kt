@@ -1,5 +1,6 @@
 package jafax.it.metrics
 
+import jafax.createResultsDirectory
 import jafax.getSimpleProjectPath
 import org.vladg.jafax.io.model.Metrics
 import org.vladg.jafax.io.scanner.ProjectScanner
@@ -20,13 +21,14 @@ class MetricsIT {
 
     @BeforeTest
     fun clearRepositories() {
+        createResultsDirectory()
         ClassRepository.clear()
         CommonRepository.clear()
     }
 
     @Test
     fun `should properly compute metrics when using the layout file`() {
-        val layoutFile = getLayoutFile(projectPath)
+        val layoutFile = getLayoutFile("Layout.JSON")
         layoutFile.delete()
         verifyMetrics()
     }
@@ -55,8 +57,8 @@ class MetricsIT {
     }
 
     private fun computeMetrics() {
-        ProjectScanner.beginScan(projectPath)
-        MetricsComputer.computeMetrics(projectPath)
+        ProjectScanner.beginScan(projectPath, "Layout.JSON")
+        MetricsComputer.computeMetrics(projectPath, "org1")
     }
 
     private fun getActualMetricsFile(path: Path) =

@@ -1,10 +1,15 @@
 package org.vladg.jafax.utils.extensions.ast
 
 import org.eclipse.jdt.core.dom.Modifier
+import java.util.EnumSet
 import org.vladg.jafax.repository.model.Modifier as ASTModifier
 
 fun modifierSetForValue(modifiers: Int): Set<ASTModifier> {
-    val modifierSet = HashSet<ASTModifier>()
+    // EnumSet, not HashSet: enum hash codes are identity-based, so a HashSet
+    // iterates in an order that depends on the JVM's allocation sequence and
+    // silently reshuffles the "modifiers" lists in the layout output whenever
+    // the build changes. EnumSet iterates in ordinal order, which is stable.
+    val modifierSet = EnumSet.noneOf(ASTModifier::class.java)
     if (modifiers and Modifier.STATIC != 0) modifierSet.add(ASTModifier.Static)
     if (modifiers and Modifier.PUBLIC != 0) modifierSet.add(ASTModifier.Public)
     if (modifiers and Modifier.PRIVATE != 0) modifierSet.add(ASTModifier.Private)
