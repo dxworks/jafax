@@ -10,6 +10,12 @@ import java.nio.file.Path
 
 @OptIn(ExperimentalSerializationApi::class)
 object InterfaceComputer {
+
+    data class InterfaceSummary(
+        val interfacesCount: Int,
+        val abstractClassesCount: Int,
+    )
+
     private val logger = logger()
 
     val json = Json {
@@ -17,7 +23,7 @@ object InterfaceComputer {
         encodeDefaults = true
     }
 
-    fun computeImports(path: Path, projName: String) {
+    fun computeImports(path: Path, projName: String): InterfaceSummary {
         logger.info("Beginning Interface calculation...")
 
         val interfaces = ClassRepository.topLevelClasses
@@ -32,6 +38,6 @@ object InterfaceComputer {
 
         path.resolve("$projName-interfaces.json").toFile().writeText(json.encodeToString(interfaces))
         path.resolve("$projName-abstract-classes.json").toFile().writeText(json.encodeToString(abstractClasses))
-
+        return InterfaceSummary(interfaces.size, abstractClasses.size)
     }
 }
